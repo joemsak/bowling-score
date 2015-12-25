@@ -83,4 +83,11 @@ describe Bowling::ScoreKeeper do
       score_keeper.roll(1, 'Rick')
     }.to raise_error(Bowling::PlayerGameHasEnded)
   end
+
+  it 'prevents bogus scores' do
+    score_keeper.roll(1, 'Rick')
+    expect {
+      score_keeper.roll(10, 'Rick')
+    }.to raise_error(Bowling::ImpossibleNumberOfPins)
+  end
 end

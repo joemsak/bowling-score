@@ -32,12 +32,14 @@ module Bowling
 
     private
     def frame_chances(frame_chances, pins)
-      if frame_chances.nil?
+      if frame_chances.empty?
         pins
       elsif tenth_frame?
         score_tenth_frame(frame_chances, pins)
-      else
+      elsif (frame_chances[0] + pins) <= 10
         pins
+      else
+        raise ImpossibleNumberOfPins
       end
     end
 
@@ -85,4 +87,5 @@ module Bowling
   end
 
   class PlayerGameHasEnded < StandardError; end
+  class ImpossibleNumberOfPins < StandardError; end
 end
