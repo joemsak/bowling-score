@@ -16,7 +16,7 @@ module Bowling
       frame = @frames[player][@current_frame] || []
       frame << frame_chances(frame, pins)
       @frames[player][@current_frame] = frame
-      @current_frame += 1 if !tenth_frame? && (frame.size == 2 || pins == 10)
+      @current_frame += 1 if !tenth_frame? && complete?(frame, pins)
     end
 
     def score(player)
@@ -36,23 +36,37 @@ module Bowling
         pins
       elsif tenth_frame?
         score_tenth_frame(frame_chances, pins)
-      elsif (frame_chances[0] + pins) <= 10
+      elsif valid_frame_score?(frame_chances[0], pins)
         pins
       else
         raise ImpossibleNumberOfPins
       end
     end
 
+    def complete?(frame, pins)
+      frame.size == 2 || pins == 10
+    end
+
     def score_tenth_frame(frame, pins)
-      if (frame.size == 2 && frame.inject(:+) < 10) || frame.size == 3
+      if two_unspared_chances?(frame) || frame.size == 3
         raise PlayerGameHasEnded
-      elsif frame[0] < 10 && (frame[0] + pins <= 10)
-        pins
-      elsif frame[0] == 10
+      elsif two_spared_chances?(frame, pins) || frame[0] == 10
         pins
       else
         raise ImpossibleNumberOfPins
       end
+    end
+
+    def valid_frame_score?(frame_pins, pins)
+      frame_pins + pins <= 10
+    end
+
+    def two_unspared_chances?(frame)
+      frame.size == 2 && frame.inject(:+) < 10
+    end
+
+    def two_spared_chances?(frame, pins)
+      frame[0] < 10 && valid_frame_score?(frame[0], pins)
     end
 
     def score_frame(frames, frame, i)
