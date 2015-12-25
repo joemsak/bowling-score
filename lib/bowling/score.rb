@@ -46,8 +46,12 @@ module Bowling
     def score_tenth_frame(frame, pins)
       if (frame.size == 2 && frame.inject(:+) < 10) || frame.size == 3
         raise PlayerGameHasEnded
-      else
+      elsif frame[0] < 10 && (frame[0] + pins <= 10)
         pins
+      elsif frame[0] == 10
+        pins
+      else
+        raise ImpossibleNumberOfPins
       end
     end
 

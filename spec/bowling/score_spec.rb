@@ -84,10 +84,26 @@ describe Bowling::ScoreKeeper do
     }.to raise_error(Bowling::PlayerGameHasEnded)
   end
 
-  it 'prevents bogus scores' do
+  it 'prevents bogus frames' do
     score_keeper.roll(1, 'Rick')
     expect {
       score_keeper.roll(10, 'Rick')
+    }.to raise_error(Bowling::ImpossibleNumberOfPins)
+  end
+
+  it 'prevents bogus tenth frames' do
+    9.times { score_keeper.roll(10, 'Rick') }
+
+    score_keeper.roll(5, 'Rick')
+
+    expect {
+      score_keeper.roll(6, 'Rick')
+    }.to raise_error(Bowling::ImpossibleNumberOfPins)
+
+    score_keeper.roll(5, 'Rick')
+
+    expect {
+      score_keeper.roll(11, 'Rick')
     }.to raise_error(Bowling::ImpossibleNumberOfPins)
   end
 end
